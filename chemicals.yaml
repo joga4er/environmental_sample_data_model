@@ -1,0 +1,125 @@
+
+id: https://w3id.org/linkml/examples/
+name: chemicals
+description:
+  List of PFAS components considered in PFAS quantification for targeted LC-MS.
+  This schema is organized in Conatiner class PFASList, a parent class PFAS containing descriptions of the chemical itself,
+  and the children class MSchemical providing details on the LCMS.
+
+license: https://creativecommons.org/publicdomain/zero/1.0/
+version: 0.0.0
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  schema: http://schema.org/
+  pubchem: https://pubchem.ncbi.nlm.nih.gov/compound/
+  ms: http://purl.obolibrary.org/obo/MS_
+  uo: http://purl.obolibrary.org/obo/UO_
+  ncit: http://purl.obolibrary.org/obo/NCIT_
+
+imports:
+  - linkml:types
+
+default_range: string
+
+classes:
+  MSChemical:
+    description: Encodes relevent information for mass spectrometry
+    slots:
+      - precursor_channel_name
+      - precursor_m_z_ratio
+      - precursor_retention_time
+      - fragment_channel_name
+      - fragment_m_z_ratio
+      - fragment_retention_time
+  ChemicalSubstance:
+    class_uri: schema:ChemicalSubstance
+    description: PFAS component, which is quantified in targeted LCMS.
+    slots:
+      - internal_name
+      - name
+      - pubchem
+      - cas
+      - smiles
+      - chemical
+      - ida
+      - ips
+      - instrumentation_detection_limit
+  ListOfChemicals:
+    description: List of PFAS components encoding general information.
+    tree_root: true
+    attributes:
+      pfas:
+        multivalued: true
+        inlined_as_list: true
+        range: ChemicalSubstance
+
+slots:
+  internal_name:
+    description: Name of PFAS component, which is internally used.
+    identifier: True
+    required: True
+  precursor_channel_name:
+    description: Internal name of the channel detecting the ion corresponding to the PFAS component.
+  fragment_channel_name:
+    description: Internal name of the channel detecting the fragment ion used to quantify the corresponding PFAS component.
+  precursor_m_z_ratio:
+    description: mass to charge ratio of the corresponding PFAS ion
+    range: float
+    unit:
+      ucum_code: m/z
+      has_quantity_kind: ms:1000040
+  fragment_m_z_ratio:
+    description: mass to charge ratio of the fragment ion
+    range: float
+    unit:
+      ucum_code: m/z
+      has_quantity_kind: ms:1000040
+  precursor_retention_time:
+    range: float
+    slot_uri: ms:1000894
+    description: expected retention time of corresponding PFAS ion
+    unit:
+      ucum_code: s
+      has_quantity_kind: uo:0000010
+  fragment_retention_time:
+    range: float
+    slot_uri: ms:1000894
+    description: expected retention time of fragment ion
+    unit:
+      ucum_code: s
+      has_quantity_kind: uo:0000010
+  ida:
+    description: associated mass labeled PFAS component added before sample extraction.
+    range: MSChemical
+  ips:
+    description: associated mass labeled PFAS component added after sample extraction, but before LCMS.
+    range: MSChemical
+  name:
+    description: full name of PFAS component
+  pubchem:
+    slot_uri: ncit:C54563
+    any_of:
+      - pattern: "[/d{4,5,6,7,8,9}]"
+      - range: MissingValueEnum
+    required: True
+  cas:
+    slot_uri: ncit:C54682
+    any_of:
+      - pattern: "[/d{2,3,4,5,6,7}/p{Pd}/d{2}/p{Pd}/d]"
+      - range: MissingValueEnum
+    required: True
+  smiles:
+    slot_uri: ms:1000868
+    required: False
+  instrumentation_detection_limit:
+    range: float
+    description: minimal concentration to meaningfully assess a PFAS component as 'detected'
+  chemical:
+    description: PFAS component
+    range: MSChemical
+
+enums:
+  MissingValueEnum:
+    permissible_values:
+      nan:
