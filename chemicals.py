@@ -1,5 +1,5 @@
 # Auto generated from chemicals.yaml by pythongen.py version: 0.0.1
-# Generation date: 2024-11-14T18:55:22
+# Generation date: 2024-11-15T16:31:49
 # Schema: chemicals
 #
 # id: https://w3id.org/linkml/examples/

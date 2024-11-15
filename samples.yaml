@@ -1,0 +1,106 @@
+id: https://w3id.org/linkml/examples/
+name: samples
+description:
+  List of environmental samples run in the Lohmann lab.
+
+license: https://creativecommons.org/publicdomain/zero/1.0/
+version: 0.0.0
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  schema: http://schema.org/
+  pubchem: https://pubchem.ncbi.nlm.nih.gov/compound/
+  ms: http://purl.obolibrary.org/obo/MS_
+  uo: http://purl.obolibrary.org/obo/UO_
+  ncit: http://purl.obolibrary.org/obo/NCIT_
+
+imports:
+  - linkml:types
+
+default_range: string
+
+classes:
+  EnvironmentalSample:
+    description: Comprises relevent data from environmental samples.
+    slots:
+      - lcms_code
+      - sample_name
+      - researcher_initials
+      - sample_type
+      - purpose
+      - related_parent_sample
+  ListOfSamples:
+    description: List of PFAS components encoding general information.
+    tree_root: true
+    attributes:
+      samples:
+        multivalued: true
+        inlined_as_list: true
+        range: EnvironmentalSample
+
+slots:
+  lcms_code:
+    description: Unique LCMS Code - 2 digits for year/4 digits for sample index.
+    pattern: "[/d{2}///d{4}]"
+    identifier: True
+    required: True
+  sample_name:
+    description: internal name used for the sample
+  researcher_initials:
+    description: Initials of principal investigator.
+    range: ResearcherInitialEnums
+  sample_type:
+    description:
+    range: SampleTypeEnums
+  purpose:
+    description: additional information about the aim of the sample analysis
+  related_parent_sample:
+    description: LCMS Code of a related sample.
+    pattern: "[/d{2}///d{4}]"
+
+enums:
+  MissingValueEnum:
+    permissible_values:
+      nan:
+  ResearcherInitialEnums:
+    permissible_values:
+      AH:
+        description: Asta Habtemichael
+      IH:
+        description: Izak Hill
+      JA:
+        description: Juliana Agudelo
+      JSN:
+        description: Jarod Snook
+      JB:
+        description: Jitka Becanova
+      JSA:
+        description: Justin Sankey
+      KS:
+        description: Kelsey Staniec
+      LG:
+        description: Liam Geyer
+      MW:
+        description: Melissa Woodward
+      OS:
+        description: Olga Skende
+      SV:
+        description: Simon Vojta
+      TE:
+        description: Taylor Elpers
+      TG:
+        description: Thomas Garrow
+      RL:
+        description: Rainer Lohmann
+      RN:
+        description: Rachel Nelson
+  SampleTypeEnums:
+    permissible_values:
+      blank:
+        description: blank sample (field blank, lab blank, process blank, method blank, etc.)
+      matrix_spike:
+        description: spiked sample, where known PFAS amounts have been added
+      pfas_quantification:
+        description: sample where pfas levels will be quantified
+      
+      
