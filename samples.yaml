@@ -10,9 +10,9 @@ prefixes:
   linkml: https://w3id.org/linkml/
   schema: http://schema.org/
   pubchem: https://pubchem.ncbi.nlm.nih.gov/compound/
-  ms: http://purl.obolibrary.org/obo/MS_
   uo: http://purl.obolibrary.org/obo/UO_
   ncit: http://purl.obolibrary.org/obo/NCIT_
+  obi: http://purl.obolibrary.org/obo/OBI_
 
 imports:
   - linkml:types
@@ -20,6 +20,17 @@ imports:
 default_range: string
 
 classes:
+  SamplingLocation:
+    description: Comprises relevant information on the place the environmental sample was collected from.
+    slots:
+      - field_name
+      - field_description
+      - latitude
+      - longitude
+      - country_name
+      - height
+      - depth
+
   EnvironmentalSample:
     description: Comprises relevent data from environmental samples.
     slots:
@@ -29,6 +40,8 @@ classes:
       - sample_type
       - purpose
       - related_parent_sample
+      - restricted
+      - location
   ListOfSamples:
     description: List of PFAS components encoding general information.
     tree_root: true
@@ -39,6 +52,7 @@ classes:
         range: EnvironmentalSample
 
 slots:
+  # general
   lcms_code:
     description: Unique LCMS Code - 2 digits for year/4 digits for sample index.
     pattern: "[/d{2}///d{4}]"
@@ -46,17 +60,66 @@ slots:
     required: True
   sample_name:
     description: internal name used for the sample
+    required: True
   researcher_initials:
     description: Initials of principal investigator.
     range: ResearcherInitialEnums
+    required: True
   sample_type:
     description:
     range: SampleTypeEnums
+    required: True
   purpose:
     description: additional information about the aim of the sample analysis
   related_parent_sample:
     description: LCMS Code of a related sample.
     pattern: "[/d{2}///d{4}]"
+  restricted:
+    description: If the sample is restricted (True), the information will not be published.
+    range: RestrictionEnums
+  location:
+    description: Detailed information about the place the environmental sample was collected from.
+    range: SamplingLocation
+
+  # location
+  field_name:
+    description: unique, internal name used for the sampling location
+    required: True
+    identifier: True
+  field_description:
+    description: additional information about the sampling location
+  latitude:
+    description: A latitude measurement with six decimal places in degrees.
+    slot_uri: ncit:C68642
+    range: string
+    pattern: "[/d{1,2}./d{6}]"
+    unit:
+      ucum_code: degree
+      has_quantity_kind: u0:0000185
+    required: True
+  longitude:
+    description: A longitude measurement with six decimal places in degrees.
+    slot_uri: ncit:C68643
+    range: string
+    pattern: "[/d{1,2,3}./d{6}]"
+    unit:
+      ucum_code: degree
+      has_quantity_kind: u0:0000185
+    required: True
+  country_name:
+    slot_uri: obi:0001627
+  height:
+    slot_uri: ncit:C25347
+    pattern: "[/d{1,2,3}./d{2}]"
+    unit:
+      ucum_code: m
+      has_quantity_kind: u0:0000185
+  depth:
+    slot_uri: ncit:C25333
+    range: decimal
+    unit:
+      ucum_code: m
+      has_quantity_kind: u0:0000185
 
 enums:
   MissingValueEnum:
@@ -94,6 +157,12 @@ enums:
         description: Rainer Lohmann
       RN:
         description: Rachel Nelson
+  RestrictionEnums:
+    permissible_values:
+      restricted:
+        description: sample data may not be published or shared
+      open:
+        description: sample data may be published or shared 
   SampleTypeEnums:
     permissible_values:
       blank:
@@ -102,5 +171,3 @@ enums:
         description: spiked sample, where known PFAS amounts have been added
       pfas_quantification:
         description: sample where pfas levels will be quantified
-      
-      

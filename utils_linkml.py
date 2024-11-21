@@ -71,6 +71,45 @@ def convert_data_to_csv(yamlschema: str, yamldata: str, csvdata: str) -> None:
         print(output)
     
 def generate_schema_png(yamlschema: str, directory: str) -> None:
+    """Generates sketch of data schema using yuml - not recommended, linkml does not continue to support it.
+
+    :param yamlschema: Name of .yaml schema.
+    :type yamlschema: str
+    :param directory: Path/name of the directory the schema image should be saved in.
+    :type directory: str
+    """
+    p = subprocess.Popen(
+        ['gen-yuml', '-f', 'png', '-d', directory, '--diagram-name', 'schema', yamlschema], shell=True, stderr=subprocess.PIPE, env=my_env,
+        cwd=os.getcwd())
+    _, error = p.communicate()
+    if error is not None:
+        print(error)
+    else:
+        print(f'Suceeded in creating image for schema.')
+
+def generate_schema_image_md(yamlschema: str, directory: str) -> None:
+    """Generates scetch of data schema using mermaid and markdown.
+
+    :param yamlschema: Name of .yaml schema.
+    :type yamlschema: str
+    :param directory: Path/name of the directory the schema image should be saved in.
+    :type directory: str
+    """
+    p = subprocess.Popen(
+        ['gen-erdiagram', yamlschema], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=my_env,
+        cwd=os.getcwd())
+    output, error = p.communicate()
+    if error is not None:
+        print(error)
+    if output is not None:
+        with open(os.path.join(directory,"schema_image.md"), "w") as f:
+            f.write(f'# Schema image \n')
+            f.write(output.decode('utf-8'))
+            f.write('\n')
+        print(f'Suceeded in creating image for schema.')
+
+
+def generate_schema_image(yamlschema: str, directory: str) -> None:
     """Generates sketch of data schema.
 
     :param yamlschema: Name of .yaml schema.
@@ -119,13 +158,14 @@ def generate_schema_documentation(
     if example_directory is not None:
         p = subprocess.Popen([
             'gen-doc', '--subfolder-type-separation',
-            '-d', directory, yamlschema, '--example-directory', example_directory,
+            '-d', directory, yamlschema, '--diagram-type', 'plantuml_class_diagram',
+            '--example-directory', example_directory,
             ], shell=True, stderr=subprocess.PIPE, env=my_env, cwd=os.getcwd()
             )
     else:
         p = subprocess.Popen([
             'gen-doc', '--subfolder-type-separation',
-            '-d', directory, yamlschema,
+            '-d', directory, yamlschema, '--diagram-type', 'plantuml_class_diagram',
             ], shell=True, stderr=subprocess.PIPE, env=my_env, cwd=os.getcwd()
             )
     _, error = p.communicate()
@@ -133,6 +173,14 @@ def generate_schema_documentation(
         print(error)
     else:
         print(f'Suceeded in creating spreadsheet for schema.')
+
+    if os.path.isfile(os.path.join(directory, 'scema_image.md')):
+        pass
+        ### TODO: render mermaid markdown to either png or docx - current workaround: open with obsidian and save as image
+        # docgenerator.convert_file(
+        #     f'{directory}/schema_image.md','docx', outputfile=f'{directory}/schema_image.docx'
+        # )
+
     docgenerator.convert_file(
         f'{directory}/index.md','docx', outputfile=f'{directory}/schema.docx'
         )
