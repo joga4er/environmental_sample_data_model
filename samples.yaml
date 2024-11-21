@@ -20,10 +20,44 @@ imports:
 default_range: string
 
 classes:
+
+  SampleCollection:
+    description: Describes basics about sample collection.
+    abstract: true
+    slots:
+      - collection_code
+      - collection_method
+      - collection_details
+
+  PassiveSampler:
+    description: Details on the passive sampler applied
+    is_a: SampleCollection
+    slots:
+      - passive_sampler_type
+
+  SampleGrabbing:
+    description: Details on the container the sample was transported in.
+    is_a: SampleCollection
+    slots:
+      - container_type
+
+  OtherSampleCollection:
+    description: Sample collection can neither be described by passive sampler nor by sample grabbing, description field should be extensively used.
+    is_a: SampleCollection
+
+  SamplingTime:
+    description: Comprises date and time information of sample deployment and collection.
+    slots:
+      - related_sample
+      - deployment_date
+      - deployment_time
+      - collection_date
+      - collection_time
+
   SamplingLocation:
     description: Comprises relevant information on the place the environmental sample was collected from.
     slots:
-      - field_name
+      - field_code
       - field_description
       - latitude
       - longitude
@@ -42,6 +76,7 @@ classes:
       - related_parent_sample
       - restricted
       - location
+      - sample_collection
   ListOfSamples:
     description: List of PFAS components encoding general information.
     tree_root: true
@@ -80,9 +115,15 @@ slots:
   location:
     description: Detailed information about the place the environmental sample was collected from.
     range: SamplingLocation
+  sample_collection:
+    description:
+    any_of:
+      - range: PassiveSampler
+      - range: SampleGrabbing
+      - range: OtherSampleCollection
 
   # location
-  field_name:
+  field_code:
     description: unique, internal name used for the sampling location
     required: True
     identifier: True
@@ -121,10 +162,58 @@ slots:
       ucum_code: m
       has_quantity_kind: u0:0000185
 
+  # date and time
+  related_sample:
+    description: Unique LCMS Code of the related sample.
+  deployment_date:
+    description: Date of sample deployment in the format '%YYYY-%MM-%DD', so e. g. 2024-11-23 for 23rd of November 2024.
+    range: string
+    pattern: "[/d{4}-/d{2}-/d{2}]"
+    slot_uri: ncit:C25164
+    required: True
+  deployment_time:
+    description: Date of sample deployment in the format '%HH:%MM', so e. g. 08:20 for 08:20a.m and 17:05 for 5:05p.m.
+    range: string
+    slot_uri: ncit:C72669
+    pattern: "[/d{4}:/d{2}]"
+  collection_date:
+    description: Date of sample collection in the format '%YYYY-%MM-%DD', so e. g. 2024-11-30 for 30th of November 2024.
+    range: string
+    pattern: "[/d{4}-/d{2}-/d{2}]"
+    slot_uri: ncit:C25164
+  collection_time:
+    description: Date of sample deployment in the format '%HH:%MM', so e. g. 16:45 for 4:45p.m.
+    range: string
+    slot_uri: ncit:C72669
+    pattern: "[/d{4}:/d{2}]"
+
+  # sample collection
+  collection_code:
+    description: unique, internal name used for the collection method or passive sampler
+    required: True
+    identifier: True
+  collection_details:
+    description: Additional comments/notes to the sample collection.
+  collection_method:
+    description: Basic categorization of the sample collection process.
+    range: CollectionMethodEnums
+    required: True
+  passive_sampler_type:
+    description: Type of used passive sampler.
+    range: PassiveSamplerEnums
+  passive_sampler_code:
+    description: Internal code of passive sampler
+    identifier: true
+  container_type:
+    description:
+    range: ContainerEnums
+
+
 enums:
   MissingValueEnum:
     permissible_values:
       nan:
+
   ResearcherInitialEnums:
     permissible_values:
       AH:
@@ -157,12 +246,14 @@ enums:
         description: Rainer Lohmann
       RN:
         description: Rachel Nelson
+
   RestrictionEnums:
     permissible_values:
       restricted:
         description: sample data may not be published or shared
       open:
-        description: sample data may be published or shared 
+        description: sample data may be published or shared
+
   SampleTypeEnums:
     permissible_values:
       blank:
@@ -171,3 +262,34 @@ enums:
         description: spiked sample, where known PFAS amounts have been added
       pfas_quantification:
         description: sample where pfas levels will be quantified
+
+  CollectionMethodEnums:
+    permissible_values:
+      PassiveSampler:
+        description: Passive sampler applied to quantify PFAS levels.
+      Grab:
+        description: Simply collected water/eggs/soil/etc. for further analysis.
+      Other:
+        description: The sample was neiher grabbed nor aggregated via passive samplers.
+
+  PassiveSamplerEnums:
+    permissible_values:
+      PE-sheet:
+        description: Polyethylen sheet - more to follow
+      SPME fiber:
+        description: solid-phase micro extraction - more to follow
+      Tube:
+        description: more to follow
+      POCIS:
+        description: more to follow
+      DGT:
+        description: diffuse gradients in thin films - more to follow
+
+  ContainerEnums:
+    permissible_values:
+      1L-bottle:
+        description: more to follow
+      50mL-bottle:
+        description: more to follow
+      bag:
+        description: more to follow

@@ -1,5 +1,5 @@
 # Auto generated from samples.yaml by pythongen.py version: 0.0.1
-# Generation date: 2024-11-21T10:55:09
+# Generation date: 2024-11-21T16:21:54
 # Schema: samples
 #
 # id: https://w3id.org/linkml/examples/
@@ -44,12 +44,181 @@ DEFAULT_ = CurieNamespace('', 'https://w3id.org/linkml/examples/')
 # Types
 
 # Class references
-class SamplingLocationFieldName(extended_str):
+class SampleCollectionCollectionCode(extended_str):
+    pass
+
+
+class PassiveSamplerCollectionCode(SampleCollectionCollectionCode):
+    pass
+
+
+class SampleGrabbingCollectionCode(SampleCollectionCollectionCode):
+    pass
+
+
+class OtherSampleCollectionCollectionCode(SampleCollectionCollectionCode):
+    pass
+
+
+class SamplingLocationFieldCode(extended_str):
     pass
 
 
 class EnvironmentalSampleLcmsCode(extended_str):
     pass
+
+
+@dataclass(repr=False)
+class SampleCollection(YAMLRoot):
+    """
+    Describes basics about sample collection.
+    """
+    _inherited_slots: ClassVar[List[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = LINKML["examples/SampleCollection"]
+    class_class_curie: ClassVar[str] = "linkml:examples/SampleCollection"
+    class_name: ClassVar[str] = "SampleCollection"
+    class_model_uri: ClassVar[URIRef] = URIRef("https://w3id.org/linkml/examples/SampleCollection")
+
+    collection_code: Union[str, SampleCollectionCollectionCode] = None
+    collection_method: Union[str, "CollectionMethodEnums"] = None
+    collection_details: Optional[str] = None
+
+    def __post_init__(self, *_: List[str], **kwargs: Dict[str, Any]):
+        if self._is_empty(self.collection_code):
+            self.MissingRequiredField("collection_code")
+        if not isinstance(self.collection_code, SampleCollectionCollectionCode):
+            self.collection_code = SampleCollectionCollectionCode(self.collection_code)
+
+        if self._is_empty(self.collection_method):
+            self.MissingRequiredField("collection_method")
+        if not isinstance(self.collection_method, CollectionMethodEnums):
+            self.collection_method = CollectionMethodEnums(self.collection_method)
+
+        if self.collection_details is not None and not isinstance(self.collection_details, str):
+            self.collection_details = str(self.collection_details)
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class PassiveSampler(SampleCollection):
+    """
+    Details on the passive sampler applied
+    """
+    _inherited_slots: ClassVar[List[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = LINKML["examples/PassiveSampler"]
+    class_class_curie: ClassVar[str] = "linkml:examples/PassiveSampler"
+    class_name: ClassVar[str] = "PassiveSampler"
+    class_model_uri: ClassVar[URIRef] = URIRef("https://w3id.org/linkml/examples/PassiveSampler")
+
+    collection_code: Union[str, PassiveSamplerCollectionCode] = None
+    collection_method: Union[str, "CollectionMethodEnums"] = None
+    passive_sampler_type: Optional[Union[str, "PassiveSamplerEnums"]] = None
+
+    def __post_init__(self, *_: List[str], **kwargs: Dict[str, Any]):
+        if self._is_empty(self.collection_code):
+            self.MissingRequiredField("collection_code")
+        if not isinstance(self.collection_code, PassiveSamplerCollectionCode):
+            self.collection_code = PassiveSamplerCollectionCode(self.collection_code)
+
+        if self.passive_sampler_type is not None and not isinstance(self.passive_sampler_type, PassiveSamplerEnums):
+            self.passive_sampler_type = PassiveSamplerEnums(self.passive_sampler_type)
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class SampleGrabbing(SampleCollection):
+    """
+    Details on the container the sample was transported in.
+    """
+    _inherited_slots: ClassVar[List[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = LINKML["examples/SampleGrabbing"]
+    class_class_curie: ClassVar[str] = "linkml:examples/SampleGrabbing"
+    class_name: ClassVar[str] = "SampleGrabbing"
+    class_model_uri: ClassVar[URIRef] = URIRef("https://w3id.org/linkml/examples/SampleGrabbing")
+
+    collection_code: Union[str, SampleGrabbingCollectionCode] = None
+    collection_method: Union[str, "CollectionMethodEnums"] = None
+    container_type: Optional[Union[str, "ContainerEnums"]] = None
+
+    def __post_init__(self, *_: List[str], **kwargs: Dict[str, Any]):
+        if self._is_empty(self.collection_code):
+            self.MissingRequiredField("collection_code")
+        if not isinstance(self.collection_code, SampleGrabbingCollectionCode):
+            self.collection_code = SampleGrabbingCollectionCode(self.collection_code)
+
+        if self.container_type is not None and not isinstance(self.container_type, ContainerEnums):
+            self.container_type = ContainerEnums(self.container_type)
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class OtherSampleCollection(SampleCollection):
+    """
+    Sample collection can neither be described by passive sampler nor by sample grabbing, description field should be
+    extensively used.
+    """
+    _inherited_slots: ClassVar[List[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = LINKML["examples/OtherSampleCollection"]
+    class_class_curie: ClassVar[str] = "linkml:examples/OtherSampleCollection"
+    class_name: ClassVar[str] = "OtherSampleCollection"
+    class_model_uri: ClassVar[URIRef] = URIRef("https://w3id.org/linkml/examples/OtherSampleCollection")
+
+    collection_code: Union[str, OtherSampleCollectionCollectionCode] = None
+    collection_method: Union[str, "CollectionMethodEnums"] = None
+
+    def __post_init__(self, *_: List[str], **kwargs: Dict[str, Any]):
+        if self._is_empty(self.collection_code):
+            self.MissingRequiredField("collection_code")
+        if not isinstance(self.collection_code, OtherSampleCollectionCollectionCode):
+            self.collection_code = OtherSampleCollectionCollectionCode(self.collection_code)
+
+        super().__post_init__(**kwargs)
+
+
+@dataclass(repr=False)
+class SamplingTime(YAMLRoot):
+    """
+    Comprises date and time information of sample deployment and collection.
+    """
+    _inherited_slots: ClassVar[List[str]] = []
+
+    class_class_uri: ClassVar[URIRef] = LINKML["examples/SamplingTime"]
+    class_class_curie: ClassVar[str] = "linkml:examples/SamplingTime"
+    class_name: ClassVar[str] = "SamplingTime"
+    class_model_uri: ClassVar[URIRef] = URIRef("https://w3id.org/linkml/examples/SamplingTime")
+
+    deployment_date: str = None
+    related_sample: Optional[str] = None
+    deployment_time: Optional[str] = None
+    collection_date: Optional[str] = None
+    collection_time: Optional[str] = None
+
+    def __post_init__(self, *_: List[str], **kwargs: Dict[str, Any]):
+        if self._is_empty(self.deployment_date):
+            self.MissingRequiredField("deployment_date")
+        if not isinstance(self.deployment_date, str):
+            self.deployment_date = str(self.deployment_date)
+
+        if self.related_sample is not None and not isinstance(self.related_sample, str):
+            self.related_sample = str(self.related_sample)
+
+        if self.deployment_time is not None and not isinstance(self.deployment_time, str):
+            self.deployment_time = str(self.deployment_time)
+
+        if self.collection_date is not None and not isinstance(self.collection_date, str):
+            self.collection_date = str(self.collection_date)
+
+        if self.collection_time is not None and not isinstance(self.collection_time, str):
+            self.collection_time = str(self.collection_time)
+
+        super().__post_init__(**kwargs)
 
 
 @dataclass(repr=False)
@@ -64,7 +233,7 @@ class SamplingLocation(YAMLRoot):
     class_name: ClassVar[str] = "SamplingLocation"
     class_model_uri: ClassVar[URIRef] = URIRef("https://w3id.org/linkml/examples/SamplingLocation")
 
-    field_name: Union[str, SamplingLocationFieldName] = None
+    field_code: Union[str, SamplingLocationFieldCode] = None
     latitude: str = None
     longitude: str = None
     field_description: Optional[str] = None
@@ -73,10 +242,10 @@ class SamplingLocation(YAMLRoot):
     depth: Optional[Decimal] = None
 
     def __post_init__(self, *_: List[str], **kwargs: Dict[str, Any]):
-        if self._is_empty(self.field_name):
-            self.MissingRequiredField("field_name")
-        if not isinstance(self.field_name, SamplingLocationFieldName):
-            self.field_name = SamplingLocationFieldName(self.field_name)
+        if self._is_empty(self.field_code):
+            self.MissingRequiredField("field_code")
+        if not isinstance(self.field_code, SamplingLocationFieldCode):
+            self.field_code = SamplingLocationFieldCode(self.field_code)
 
         if self._is_empty(self.latitude):
             self.MissingRequiredField("latitude")
@@ -122,7 +291,8 @@ class EnvironmentalSample(YAMLRoot):
     purpose: Optional[str] = None
     related_parent_sample: Optional[str] = None
     restricted: Optional[Union[str, "RestrictionEnums"]] = None
-    location: Optional[Union[str, SamplingLocationFieldName]] = None
+    location: Optional[Union[str, SamplingLocationFieldCode]] = None
+    sample_collection: Optional[str] = None
 
     def __post_init__(self, *_: List[str], **kwargs: Dict[str, Any]):
         if self._is_empty(self.lcms_code):
@@ -154,8 +324,11 @@ class EnvironmentalSample(YAMLRoot):
         if self.restricted is not None and not isinstance(self.restricted, RestrictionEnums):
             self.restricted = RestrictionEnums(self.restricted)
 
-        if self.location is not None and not isinstance(self.location, SamplingLocationFieldName):
-            self.location = SamplingLocationFieldName(self.location)
+        if self.location is not None and not isinstance(self.location, SamplingLocationFieldCode):
+            self.location = SamplingLocationFieldCode(self.location)
+
+        if self.sample_collection is not None and not isinstance(self.sample_collection, str):
+            self.sample_collection = str(self.sample_collection)
 
         super().__post_init__(**kwargs)
 
@@ -270,6 +443,70 @@ class SampleTypeEnums(EnumDefinitionImpl):
         name="SampleTypeEnums",
     )
 
+class CollectionMethodEnums(EnumDefinitionImpl):
+
+    PassiveSampler = PermissibleValue(
+        text="PassiveSampler",
+        description="Passive sampler applied to quantify PFAS levels.")
+    Grab = PermissibleValue(
+        text="Grab",
+        description="Simply collected water/eggs/soil/etc. for further analysis.")
+    Other = PermissibleValue(
+        text="Other",
+        description="The sample was neiher grabbed nor aggregated via passive samplers.")
+
+    _defn = EnumDefinition(
+        name="CollectionMethodEnums",
+    )
+
+class PassiveSamplerEnums(EnumDefinitionImpl):
+
+    Tube = PermissibleValue(
+        text="Tube",
+        description="more to follow")
+    POCIS = PermissibleValue(
+        text="POCIS",
+        description="more to follow")
+    DGT = PermissibleValue(
+        text="DGT",
+        description="diffuse gradients in thin films - more to follow")
+
+    _defn = EnumDefinition(
+        name="PassiveSamplerEnums",
+    )
+
+    @classmethod
+    def _addvals(cls):
+        setattr(cls, "PE-sheet",
+            PermissibleValue(
+                text="PE-sheet",
+                description="Polyethylen sheet - more to follow"))
+        setattr(cls, "SPME fiber",
+            PermissibleValue(
+                text="SPME fiber",
+                description="solid-phase micro extraction - more to follow"))
+
+class ContainerEnums(EnumDefinitionImpl):
+
+    bag = PermissibleValue(
+        text="bag",
+        description="more to follow")
+
+    _defn = EnumDefinition(
+        name="ContainerEnums",
+    )
+
+    @classmethod
+    def _addvals(cls):
+        setattr(cls, "1L-bottle",
+            PermissibleValue(
+                text="1L-bottle",
+                description="more to follow"))
+        setattr(cls, "50mL-bottle",
+            PermissibleValue(
+                text="50mL-bottle",
+                description="more to follow"))
+
 # Slots
 class slots:
     pass
@@ -298,10 +535,13 @@ slots.restricted = Slot(uri=DEFAULT_.restricted, name="restricted", curie=DEFAUL
                    model_uri=DEFAULT_.restricted, domain=None, range=Optional[Union[str, "RestrictionEnums"]])
 
 slots.location = Slot(uri=DEFAULT_.location, name="location", curie=DEFAULT_.curie('location'),
-                   model_uri=DEFAULT_.location, domain=None, range=Optional[Union[str, SamplingLocationFieldName]])
+                   model_uri=DEFAULT_.location, domain=None, range=Optional[Union[str, SamplingLocationFieldCode]])
 
-slots.field_name = Slot(uri=DEFAULT_.field_name, name="field_name", curie=DEFAULT_.curie('field_name'),
-                   model_uri=DEFAULT_.field_name, domain=None, range=URIRef)
+slots.sample_collection = Slot(uri=DEFAULT_.sample_collection, name="sample_collection", curie=DEFAULT_.curie('sample_collection'),
+                   model_uri=DEFAULT_.sample_collection, domain=None, range=Optional[str])
+
+slots.field_code = Slot(uri=DEFAULT_.field_code, name="field_code", curie=DEFAULT_.curie('field_code'),
+                   model_uri=DEFAULT_.field_code, domain=None, range=URIRef)
 
 slots.field_description = Slot(uri=DEFAULT_.field_description, name="field_description", curie=DEFAULT_.curie('field_description'),
                    model_uri=DEFAULT_.field_description, domain=None, range=Optional[str])
@@ -323,6 +563,43 @@ slots.height = Slot(uri=NCIT.C25347, name="height", curie=NCIT.curie('C25347'),
 
 slots.depth = Slot(uri=NCIT.C25333, name="depth", curie=NCIT.curie('C25333'),
                    model_uri=DEFAULT_.depth, domain=None, range=Optional[Decimal])
+
+slots.related_sample = Slot(uri=DEFAULT_.related_sample, name="related_sample", curie=DEFAULT_.curie('related_sample'),
+                   model_uri=DEFAULT_.related_sample, domain=None, range=Optional[str])
+
+slots.deployment_date = Slot(uri=NCIT.C25164, name="deployment_date", curie=NCIT.curie('C25164'),
+                   model_uri=DEFAULT_.deployment_date, domain=None, range=str,
+                   pattern=re.compile(r'[/d{4}-/d{2}-/d{2}]'))
+
+slots.deployment_time = Slot(uri=NCIT.C72669, name="deployment_time", curie=NCIT.curie('C72669'),
+                   model_uri=DEFAULT_.deployment_time, domain=None, range=Optional[str],
+                   pattern=re.compile(r'[/d{4}:/d{2}]'))
+
+slots.collection_date = Slot(uri=NCIT.C25164, name="collection_date", curie=NCIT.curie('C25164'),
+                   model_uri=DEFAULT_.collection_date, domain=None, range=Optional[str],
+                   pattern=re.compile(r'[/d{4}-/d{2}-/d{2}]'))
+
+slots.collection_time = Slot(uri=NCIT.C72669, name="collection_time", curie=NCIT.curie('C72669'),
+                   model_uri=DEFAULT_.collection_time, domain=None, range=Optional[str],
+                   pattern=re.compile(r'[/d{4}:/d{2}]'))
+
+slots.collection_code = Slot(uri=DEFAULT_.collection_code, name="collection_code", curie=DEFAULT_.curie('collection_code'),
+                   model_uri=DEFAULT_.collection_code, domain=None, range=URIRef)
+
+slots.collection_details = Slot(uri=DEFAULT_.collection_details, name="collection_details", curie=DEFAULT_.curie('collection_details'),
+                   model_uri=DEFAULT_.collection_details, domain=None, range=Optional[str])
+
+slots.collection_method = Slot(uri=DEFAULT_.collection_method, name="collection_method", curie=DEFAULT_.curie('collection_method'),
+                   model_uri=DEFAULT_.collection_method, domain=None, range=Union[str, "CollectionMethodEnums"])
+
+slots.passive_sampler_type = Slot(uri=DEFAULT_.passive_sampler_type, name="passive_sampler_type", curie=DEFAULT_.curie('passive_sampler_type'),
+                   model_uri=DEFAULT_.passive_sampler_type, domain=None, range=Optional[Union[str, "PassiveSamplerEnums"]])
+
+slots.passive_sampler_code = Slot(uri=DEFAULT_.passive_sampler_code, name="passive_sampler_code", curie=DEFAULT_.curie('passive_sampler_code'),
+                   model_uri=DEFAULT_.passive_sampler_code, domain=None, range=URIRef)
+
+slots.container_type = Slot(uri=DEFAULT_.container_type, name="container_type", curie=DEFAULT_.curie('container_type'),
+                   model_uri=DEFAULT_.container_type, domain=None, range=Optional[Union[str, "ContainerEnums"]])
 
 slots.listOfSamples__samples = Slot(uri=DEFAULT_.samples, name="listOfSamples__samples", curie=DEFAULT_.curie('samples'),
                    model_uri=DEFAULT_.listOfSamples__samples, domain=None, range=Optional[Union[Dict[Union[str, EnvironmentalSampleLcmsCode], Union[dict, EnvironmentalSample]], List[Union[dict, EnvironmentalSample]]]])
