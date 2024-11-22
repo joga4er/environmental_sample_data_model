@@ -19,40 +19,39 @@ imports:
 
 default_range: string
 
+subsets:
+  TimeInformation:
+  SamplePreparation:
+
 classes:
-
-  SampleCollection:
-    description: Describes basics about sample collection.
-    abstract: true
+  EnvironmentalSample:
+    description: Comprises relevent data from environmental samples.
     slots:
-      - collection_code
-      - collection_method
-      - collection_details
+      - lcms_code
+      - sample_name
+      - researcher_initials
+      - lcms_type
+      - purpose
+      - related_parent_sample
+      - restricted
+      - location
+      - sample_category
+      - sample_collection
 
-  PassiveSampler:
-    description: Details on the passive sampler applied
-    is_a: SampleCollection
-    slots:
-      - passive_sampler_type
-
-  SampleGrabbing:
-    description: Details on the container the sample was transported in.
-    is_a: SampleCollection
-    slots:
-      - container_type
-
-  OtherSampleCollection:
-    description: Sample collection can neither be described by passive sampler nor by sample grabbing, description field should be extensively used.
-    is_a: SampleCollection
-
-  SamplingTime:
-    description: Comprises date and time information of sample deployment and collection.
-    slots:
-      - related_sample
+    # time information
       - deployment_date
       - deployment_time
       - collection_date
       - collection_time
+
+    # information on sample preparation
+      - preparation_description
+      - extracted_standard_code
+      - extracted_standard_added
+      - non_extracted_standard_code
+      - non_extracted_standard_added
+      - extraction
+      - dilution
 
   SamplingLocation:
     description: Comprises relevant information on the place the environmental sample was collected from.
@@ -65,18 +64,38 @@ classes:
       - height
       - depth
 
-  EnvironmentalSample:
-    description: Comprises relevent data from environmental samples.
+  SampleCollection:
+    description: Describes basics about sample collection and sample itselt
+    abstract: True
     slots:
-      - lcms_code
-      - sample_name
-      - researcher_initials
-      - sample_type
-      - purpose
-      - related_parent_sample
-      - restricted
-      - location
-      - sample_collection
+      - collection_code
+      - collection_method
+      - collection_details
+      - passive_sampler_type
+      - container_type
+
+  WaterSampleCollection:
+    description: Describes basics about water sample collection
+    is_a: SampleCollection
+    slots:
+      - water_type
+      - temperature
+      - salinity 
+
+  BiotaSampleCollection:
+    description: Describes basics about biota sample collection
+    is_a: SampleCollection
+    slots:
+      - species
+      - bodypart
+      - mass
+      - lenght
+      - age
+
+  OtherSampleCollection:
+    description: Describes basics about water sample collection
+    is_a: SampleCollection
+
   ListOfSamples:
     description: List of PFAS components encoding general information.
     tree_root: true
@@ -93,16 +112,21 @@ slots:
     pattern: "[/d{2}///d{4}]"
     identifier: True
     required: True
+    slot_uri: schema:identifier
+    examples: 
+      value: 24/0179
   sample_name:
     description: internal name used for the sample
     required: True
+    examples:
+      value: GSO_Dock_231103
   researcher_initials:
     description: Initials of principal investigator.
     range: ResearcherInitialEnums
     required: True
-  sample_type:
+  lcms_type:
     description:
-    range: SampleTypeEnums
+    range: LCMSTypeEnums
     required: True
   purpose:
     description: additional information about the aim of the sample analysis
@@ -112,21 +136,30 @@ slots:
   restricted:
     description: If the sample is restricted (True), the information will not be published.
     range: RestrictionEnums
+    required: True
   location:
     description: Detailed information about the place the environmental sample was collected from.
     range: SamplingLocation
+    required: True
+  sample_category:
+    description: Categorization of the sample.
+    range: SampleTypeEnums
+    designates_type: true
   sample_collection:
-    description:
+    description: Detailed information about how the sample was collected.
+    range: SampleCollection
     any_of:
-      - range: PassiveSampler
-      - range: SampleGrabbing
+      - range: WaterSampleCollection
+      - range: BiotaSampleCollection
       - range: OtherSampleCollection
+    required: True
 
   # location
   field_code:
     description: unique, internal name used for the sampling location
     required: True
     identifier: True
+    slot_uri: schema:identifier
   field_description:
     description: additional information about the sampling location
   latitude:
@@ -149,49 +182,58 @@ slots:
     required: True
   country_name:
     slot_uri: obi:0001627
+    examples:
+      value: USA
   height:
     slot_uri: ncit:C25347
-    pattern: "[/d{1,2,3}./d{2}]"
+    range: decimal
     unit:
       ucum_code: m
       has_quantity_kind: u0:0000185
+    examples:
+      value: 13.4
   depth:
     slot_uri: ncit:C25333
     range: decimal
     unit:
       ucum_code: m
       has_quantity_kind: u0:0000185
+    examples:
+      value: 4.9
 
   # date and time
-  related_sample:
-    description: Unique LCMS Code of the related sample.
   deployment_date:
     description: Date of sample deployment in the format '%YYYY-%MM-%DD', so e. g. 2024-11-23 for 23rd of November 2024.
-    range: string
     pattern: "[/d{4}-/d{2}-/d{2}]"
     slot_uri: ncit:C25164
     required: True
+    examples:
+      value: '2024-11-23'
   deployment_time:
     description: Date of sample deployment in the format '%HH:%MM', so e. g. 08:20 for 08:20a.m and 17:05 for 5:05p.m.
-    range: string
     slot_uri: ncit:C72669
     pattern: "[/d{4}:/d{2}]"
+    examples:
+      value: '17:05'
   collection_date:
     description: Date of sample collection in the format '%YYYY-%MM-%DD', so e. g. 2024-11-30 for 30th of November 2024.
-    range: string
     pattern: "[/d{4}-/d{2}-/d{2}]"
     slot_uri: ncit:C25164
+    examples:
+      value: '2024-11-30'
   collection_time:
     description: Date of sample deployment in the format '%HH:%MM', so e. g. 16:45 for 4:45p.m.
-    range: string
     slot_uri: ncit:C72669
     pattern: "[/d{4}:/d{2}]"
+    examples:
+      value: '16:45'
 
   # sample collection
   collection_code:
-    description: unique, internal name used for the collection method or passive sampler
+    description: Unique, internal name used for the collection method or passive sampler.
     required: True
     identifier: True
+    slot_uri: schema:identifier
   collection_details:
     description: Additional comments/notes to the sample collection.
   collection_method:
@@ -201,12 +243,112 @@ slots:
   passive_sampler_type:
     description: Type of used passive sampler.
     range: PassiveSamplerEnums
-  passive_sampler_code:
-    description: Internal code of passive sampler
-    identifier: true
   container_type:
-    description:
+    description: Type of bottle/container/bag used for sample collection.
     range: ContainerEnums
+
+  water_type:
+    description: Categorization of water type.
+    range: WaterTypeEnums
+  temperature:
+    description: Temperature of water in degree Celsius.
+    range: decimal
+    unit:
+      ucum_code: m
+      has_quantity_kind: uo:0000027
+    examples:
+      value: 18.5
+  salinity:
+    description: Salinity of water in parts per million.
+    range: decimal
+    unit:
+      ucum_code: ppm
+      has_quantity_kind: u0:0000169
+    examples:
+      value: 78.0
+
+  species:
+    description: Categorization of analyzed species.
+    range: SpeciesEnums
+  bodypart:
+    description: Categorization of 'body parts' of analyzed species.
+    range: BodyPartEnums
+  mass:
+    description: Mass of species in g.
+    range: decimal
+    unit:
+      ucum_code: g
+      has_quantity_kind: u0:0000021
+    examples:
+      value: 100.0
+  lenght:
+    description: Lenght of species in cm.
+    range: decimal
+    unit:
+      ucum_code: cm
+      has_quantity_kind: u0:0000015
+    examples:
+      value: 14.3
+  age:
+    description: Age of species in years.
+    range: decimal
+    unit:
+      ucum_code: a
+      has_quantity_kind: uo:0000036
+    examples:
+      value: 2.3
+
+  # sample preparation
+  preparation_description:
+    description: Additional information about the sample preparation/extraction.
+  extracted_standard_code:
+    description: Internal code of extracted standard.
+    pattern: "[/#:/d{3}/^[a-z]{0,1,2}]"
+    examples:
+      value: '#118'
+  extracted_standard_added:
+    description: Amount of extracted standard added in microliter per sample.
+    range: integer
+    unit:
+      ucum_code: mul
+      has_quantity_kind: uo:0000101
+    examples:
+      value: 20
+  non_extracted_standard_code:
+    description: Internal code of non-extracted standard.
+    pattern: "[/#:/d{3}/^[a-z]{0,1,2}]"
+    examples:
+      value: '#334a'
+  non_extracted_standard_added:
+    description: Amount of non-extracted standard added in microliter per sample.
+    range: integer
+    unit:
+      ucum_code: mul
+      has_quantity_kind: uo:0000101
+    examples:
+      value: 40
+  spike_code:
+    description: Internal code of PFAS / spike.
+    pattern: "[/#:/d{3}/^[a-z]{0,1,2}]"
+    examples:
+      value: '#183a'
+  spike_added:
+    description: Amount of PFAS/spike added in microliter per sample.
+    range: integer
+    unit:
+      ucum_code: mul
+      has_quantity_kind: uo:0000101
+    examples:
+      value: 20
+  extraction:
+    description: Differentiates between direct injection and samples undergoing extraction before LCMS.
+    range: ExtractionEnums
+    required: true
+  dilution:
+    description: Dilution factor (in case of direct injection) or factor of dilution of extracted sample.
+    range: integer
+    examples:
+      value: 6
 
 
 enums:
@@ -246,22 +388,24 @@ enums:
         description: Rainer Lohmann
       RN:
         description: Rachel Nelson
+      Other:
+        description: Please complain, if your name is not in the list (johanna.ganglbauer@uri.edu).
 
   RestrictionEnums:
     permissible_values:
-      restricted:
-        description: sample data may not be published or shared
-      open:
-        description: sample data may be published or shared
+      Restricted:
+        description: Sample data may not be published or shared.
+      Open:
+        description: Sample data may be published or shared.
 
-  SampleTypeEnums:
+  LCMSTypeEnums:
     permissible_values:
-      blank:
-        description: blank sample (field blank, lab blank, process blank, method blank, etc.)
-      matrix_spike:
-        description: spiked sample, where known PFAS amounts have been added
-      pfas_quantification:
-        description: sample where pfas levels will be quantified
+      Blank:
+        description: Blank sample (field blank, lab blank, process blank, method blank, etc.)
+      MatrixSpike:
+        description: Spiked sample, where known PFAS amounts have been added.
+      PfasQuantification:
+        description: Sample where pfas levels will be quantified.
 
   CollectionMethodEnums:
     permissible_values:
@@ -284,6 +428,8 @@ enums:
         description: more to follow
       DGT:
         description: diffuse gradients in thin films - more to follow
+      Other:
+        description: Please specify further details in the field 'collection_details'.
 
   ContainerEnums:
     permissible_values:
@@ -291,5 +437,100 @@ enums:
         description: more to follow
       50mL-bottle:
         description: more to follow
-      bag:
+      Bag:
+        description: more to follow
+      IndoorFilterAir:
+        description: more to follow
+      OutdoorFilterAir:
+        description: more to follow
+      Other:
+        description: Please specify further details in the field 'collection_details'.
+  
+  ExtractionEnums:
+    permissible_values:
+      DirectInjection:
+        description: Sample did not go through an extraction procedure before LCMS and is directly used for LCMS.
+      Extraction:
+        description: Sample went through an extraction procedure before LCMS.
+
+  SampleTypeEnums:
+    permissible_values:
+      Water:
+        description: more to follow
+      Soil:
+        description: more to follow
+      Air:
+        description: more to follow
+      Sediment:
+        description: more to follow
+      Biota:
+        description: more to follow
+      Lab:
+        description: more to follow
+      Other:
+        description: Please specify further details in the 'collection_details' field.
+
+  WaterTypeEnums:
+    permissible_values:
+      DeIonizedWater:
+        description: more to follow
+      DrinkingWater:
+        description: more to follow
+      GroundWater:
+        description: more to follow
+      Other:
+        description: Please specify further details in the 'collection_details' field.
+      Pond:
+        description: more to follow
+      River:
+        description: more to follow
+      Sea:
+        description: more to follow
+
+  SpeciesEnums:
+    permissible_values:
+      Bird:
+        description: more to follow
+      Fish:
+        description: more to follow
+      Human:
+        description: more to follow
+      Kelp:
+        description: more to follow
+      MarineVegetationMix:
+        description: more to follow
+      Mouse:
+        description: more to follow
+      Other:
+        description: Please specify further details in the 'collection_details' field.
+      Oyester:
+        description: more to follow
+      Plankton:
+        description: more to follow
+      Rat:
+        description: more to follow
+      Turtle:
+        description: more to follow
+
+  BodyPartEnums:
+    permissible_values:
+      Agarose:
+        description: more to follow
+      All:
+        description: more to follow
+      Blood:
+        description: more to follow
+      Egg:
+        description: more to follow
+      Feather:
+        description: more to follow
+      Liver:
+        description: more to follow
+      Other:
+        description: more to follow
+      Plasma:
+        description: more to follow
+      Serum:
+        description: more to follow
+      Tissue:
         description: more to follow

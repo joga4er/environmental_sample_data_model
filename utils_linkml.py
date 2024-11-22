@@ -96,8 +96,9 @@ def generate_schema_image_md(yamlschema: str, directory: str) -> None:
     :type directory: str
     """
     p = subprocess.Popen(
-        ['gen-erdiagram', yamlschema], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=my_env,
-        cwd=os.getcwd())
+        ['gen-erdiagram', yamlschema, ], shell=True, stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, env=my_env, cwd=os.getcwd()
+        )
     output, error = p.communicate()
     if error is not None:
         print(error)
