@@ -20,12 +20,21 @@ imports:
 default_range: string
 
 subsets:
+  GeneralInformation:
+    description: Collection of general information about the sample.
   TimeInformation:
+    description: Collection of time related information on the sample collection.
   SamplePreparation:
+    description: Collection of information on sample preparation for LCMS.
 
 classes:
   EnvironmentalSample:
     description: Comprises relevent data from environmental samples.
+    slot_usage:
+      sample_category:
+        range: SampleTypeEnums
+    defining_slots:
+      sample_collection
     slots:
       - lcms_code
       - sample_name
@@ -35,7 +44,6 @@ classes:
       - related_parent_sample
       - restricted
       - location
-      - sample_category
       - sample_collection
 
     # time information
@@ -65,9 +73,16 @@ classes:
       - depth
 
   SampleCollection:
-    description: Describes basics about sample collection and sample itselt
-    abstract: True
+    description: Describes basics about sample collection and sample itself.
+    mixin: true
+    aliases:
+      - AirSampleCollection
+      - SedimentSampleCollection
+      - SoilSampleCollection
+      - OtherSampleCollection
+      - LabSampleCollection
     slots:
+      - sample_category
       - collection_code
       - collection_method
       - collection_details
@@ -76,7 +91,8 @@ classes:
 
   WaterSampleCollection:
     description: Describes basics about water sample collection
-    is_a: SampleCollection
+    mixins:
+      - SampleCollection
     slots:
       - water_type
       - temperature
@@ -84,17 +100,14 @@ classes:
 
   BiotaSampleCollection:
     description: Describes basics about biota sample collection
-    is_a: SampleCollection
+    mixins:
+      - SampleCollection
     slots:
       - species
       - bodypart
       - mass
       - lenght
       - age
-
-  OtherSampleCollection:
-    description: Describes basics about water sample collection
-    is_a: SampleCollection
 
   ListOfSamples:
     description: List of PFAS components encoding general information.
@@ -115,43 +128,51 @@ slots:
     slot_uri: schema:identifier
     examples: 
       value: 24/0179
+    in_subset:
+      - GeneralInformation
   sample_name:
     description: internal name used for the sample
     required: True
     examples:
       value: GSO_Dock_231103
+    in_subset:
+      - GeneralInformation
   researcher_initials:
     description: Initials of principal investigator.
     range: ResearcherInitialEnums
     required: True
+    in_subset:
+      - GeneralInformation
   lcms_type:
     description:
     range: LCMSTypeEnums
     required: True
+    in_subset:
+      - GeneralInformation
   purpose:
     description: additional information about the aim of the sample analysis
+    in_subset:
+      - GeneralInformation
   related_parent_sample:
     description: LCMS Code of a related sample.
     pattern: "[/d{2}///d{4}]"
+    in_subset:
+      - GeneralInformation
   restricted:
     description: If the sample is restricted (True), the information will not be published.
     range: RestrictionEnums
     required: True
+    in_subset:
+    - GeneralInformation
   location:
     description: Detailed information about the place the environmental sample was collected from.
     range: SamplingLocation
     required: True
-  sample_category:
-    description: Categorization of the sample.
-    range: SampleTypeEnums
-    designates_type: true
+    in_subset:
+    - GeneralInformation
   sample_collection:
     description: Detailed information about how the sample was collected.
     range: SampleCollection
-    any_of:
-      - range: WaterSampleCollection
-      - range: BiotaSampleCollection
-      - range: OtherSampleCollection
     required: True
 
   # location
@@ -207,24 +228,32 @@ slots:
     pattern: "[/d{4}-/d{2}-/d{2}]"
     slot_uri: ncit:C25164
     required: True
+    in_subset:
+      - TimeInformation
     examples:
       value: '2024-11-23'
   deployment_time:
     description: Date of sample deployment in the format '%HH:%MM', so e. g. 08:20 for 08:20a.m and 17:05 for 5:05p.m.
     slot_uri: ncit:C72669
     pattern: "[/d{4}:/d{2}]"
+    in_subset:
+      - TimeInformation
     examples:
       value: '17:05'
   collection_date:
     description: Date of sample collection in the format '%YYYY-%MM-%DD', so e. g. 2024-11-30 for 30th of November 2024.
     pattern: "[/d{4}-/d{2}-/d{2}]"
     slot_uri: ncit:C25164
+    in_subset:
+      - TimeInformation
     examples:
       value: '2024-11-30'
   collection_time:
     description: Date of sample deployment in the format '%HH:%MM', so e. g. 16:45 for 4:45p.m.
     slot_uri: ncit:C72669
     pattern: "[/d{4}:/d{2}]"
+    in_subset:
+      - TimeInformation
     examples:
       value: '16:45'
 
@@ -234,6 +263,10 @@ slots:
     required: True
     identifier: True
     slot_uri: schema:identifier
+  sample_category:
+    description: Categorization of the sample.
+    range: SampleTypeEnums
+    designates_type: true
   collection_details:
     description: Additional comments/notes to the sample collection.
   collection_method:
@@ -455,19 +488,19 @@ enums:
 
   SampleTypeEnums:
     permissible_values:
-      Water:
+      WaterSampleCollection:
         description: more to follow
-      Soil:
+      SoilSampleCollection:
         description: more to follow
-      Air:
+      AirSampleCollection:
         description: more to follow
-      Sediment:
+      SedimentSampleCollection:
         description: more to follow
-      Biota:
+      BiotaSampleCollection:
         description: more to follow
-      Lab:
+      LabSampleCollection:
         description: more to follow
-      Other:
+      OtherSampleCollection:
         description: Please specify further details in the 'collection_details' field.
 
   WaterTypeEnums:

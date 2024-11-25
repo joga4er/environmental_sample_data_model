@@ -96,7 +96,7 @@ def generate_schema_image_md(yamlschema: str, directory: str) -> None:
     :type directory: str
     """
     p = subprocess.Popen(
-        ['gen-erdiagram', yamlschema, ], shell=True, stdout=subprocess.PIPE,
+        ['gen-erdiagram', yamlschema, '--follow-references'], shell=True, stdout=subprocess.PIPE,
         stderr=subprocess.PIPE, env=my_env, cwd=os.getcwd()
         )
     output, error = p.communicate()
@@ -136,7 +136,7 @@ def generate_schema_excel(yamlschema: str, excelschema: str) -> None:
     :type yamlschema: str
     """
     p = subprocess.Popen(
-        ['gen-excel', yamlschema, '--output', excelschema], shell=True, stderr=subprocess.PIPE, env=my_env,
+        ['gen-excel', yamlschema, '--output', excelschema, '--include-mixins'], shell=True, stderr=subprocess.PIPE, env=my_env,
         cwd=os.getcwd())
     _, error = p.communicate()
     if error is not None:
