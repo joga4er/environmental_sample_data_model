@@ -35,6 +35,11 @@ classes:
         range: SampleTypeEnums
     defining_slots:
       sample_collection
+    unique_keys:
+      label_pair:
+        unique_key_slots:
+        - lcms_code
+        - sample_name
     slots:
       - lcms_code
       - sample_name
@@ -58,6 +63,8 @@ classes:
       - extracted_standard_added
       - non_extracted_standard_code
       - non_extracted_standard_added
+      - spike_code
+      - spike_added
       - extraction
       - dilution
 
@@ -131,7 +138,7 @@ slots:
     in_subset:
       - GeneralInformation
   sample_name:
-    description: internal name used for the sample
+    description: Unique, internal name used for the sample.
     required: True
     examples:
       value: GSO_Dock_231103
@@ -144,7 +151,7 @@ slots:
     in_subset:
       - GeneralInformation
   lcms_type:
-    description:
+    description: Distinguish between blank samples, spiked samples and samples where PFAS contamination is expected.
     range: LCMSTypeEnums
     required: True
     in_subset:
@@ -165,13 +172,13 @@ slots:
     in_subset:
     - GeneralInformation
   location:
-    description: Detailed information about the place the environmental sample was collected from.
+    description: Field_code of location the sample was collected from.
     range: SamplingLocation
     required: True
     in_subset:
     - GeneralInformation
   sample_collection:
-    description: Detailed information about how the sample was collected.
+    description: Collection_code of the related SampleCollection field. Can be either SampleCollection, EnvironmentalSampleCollection or WaterSampleCollection.
     range: SampleCollection
     required: True
 
@@ -186,7 +193,6 @@ slots:
   latitude:
     description: A latitude measurement with six decimal places in degrees.
     slot_uri: ncit:C68642
-    range: string
     pattern: "[/d{1,2}./d{6}]"
     unit:
       ucum_code: degree
@@ -195,17 +201,18 @@ slots:
   longitude:
     description: A longitude measurement with six decimal places in degrees.
     slot_uri: ncit:C68643
-    range: string
     pattern: "[/d{1,2,3}./d{6}]"
     unit:
       ucum_code: degree
       has_quantity_kind: u0:0000185
     required: True
   country_name:
+    description: Indicate the country the sample was collected in.
     slot_uri: obi:0001627
     examples:
       value: USA
   height:
+    description: Height of sample deployment in meter above ground/water/sea level.
     slot_uri: ncit:C25347
     range: decimal
     unit:
@@ -214,6 +221,7 @@ slots:
     examples:
       value: 13.4
   depth:
+    description: Depth of sample deployment in meter below ground/water/sea level.
     slot_uri: ncit:C25333
     range: decimal
     unit:
@@ -233,7 +241,7 @@ slots:
     examples:
       value: '2024-11-23'
   deployment_time:
-    description: Date of sample deployment in the format '%HH:%MM', so e. g. 08:20 for 08:20a.m and 17:05 for 5:05p.m.
+    description: Time of sample deployment in the format '%HH:%MM', so e. g. 08:20 for 08:20a.m and 17:05 for 5:05p.m.
     slot_uri: ncit:C72669
     pattern: "[/d{4}:/d{2}]"
     in_subset:
@@ -249,7 +257,7 @@ slots:
     examples:
       value: '2024-11-30'
   collection_time:
-    description: Date of sample deployment in the format '%HH:%MM', so e. g. 16:45 for 4:45p.m.
+    description: Time of sample deployment in the format '%HH:%MM', so e. g. 16:45 for 4:45p.m.
     slot_uri: ncit:C72669
     pattern: "[/d{4}:/d{2}]"
     in_subset:
@@ -335,8 +343,8 @@ slots:
   preparation_description:
     description: Additional information about the sample preparation/extraction.
   extracted_standard_code:
-    description: Internal code of extracted standard.
-    pattern: "[/#:/d{3}/^[a-z]{0,1,2}]"
+    description: Internal code of extracted standard - starts with "#".
+    pattern: "[/#+$]"
     examples:
       value: '#118'
   extracted_standard_added:
@@ -348,8 +356,8 @@ slots:
     examples:
       value: 20
   non_extracted_standard_code:
-    description: Internal code of non-extracted standard.
-    pattern: "[/#:/d{3}/^[a-z]{0,1,2}]"
+    description: Internal code of non-extracted standard - starts with "#".
+    pattern: "[/#+$]"
     examples:
       value: '#334a'
   non_extracted_standard_added:
@@ -361,8 +369,8 @@ slots:
     examples:
       value: 40
   spike_code:
-    description: Internal code of PFAS / spike.
-    pattern: "[/#:/d{3}/^[a-z]{0,1,2}]"
+    description: Internal code of PFAS / spike - starts with "#".
+    pattern: "[/#+$]"
     examples:
       value: '#183a'
   spike_added:
