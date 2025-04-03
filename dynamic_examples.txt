@@ -1,0 +1,3 @@
+https://github.com/linkml/linkml-model/blob/main/examples/dynamic-enums-example.yaml
+
+https://github.com/linkml/linkml-model/blob/main/examples/rules-example.yaml

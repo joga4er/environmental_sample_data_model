@@ -130,12 +130,14 @@ def excel_postprocessing(filename: str, slots: Any) -> None:
             wb_styler.apply_patterns_and_ranges(field_attributes=field_attributes, colidx=colidx)
  
         if colidx > 0:
-            add_compulsory_fields_validation_colum(sheet=sheet, colidx=colidx, compulsory_fields=compulsory_fields)
+            add_compulsory_fields_validation_colum(sheet=sheet, colidx=colidx + 1, compulsory_fields=compulsory_fields)
             colidx += 1
         if sheet.title == 'EnvironmentalSample':
-            add_unique_fields_validation_column(sheet=sheet, relevant_column_range=['SamplingLocation!A3:A999'],relevant_column=8,colidx=colidx)
+            add_unique_fields_validation_column(sheet=sheet, relevant_column_range=['SamplingLocation!A3:A999'],relevant_column=8,colidx=colidx + 1)
             add_unique_fields_validation_column(sheet=sheet, relevant_column_range=[
                 'SampleCollection!B3:B999', 'WaterSampleCollection!E3:E999', 'BiotaSampleCollection!G3:G999',
-            ], relevant_column=9,colidx=colidx + 1)
+            ], relevant_column=9,colidx=colidx + 2)
+        elif sheet.title == 'ListOfSamples':
+            wb.remove(sheet)
     wb.save(filename=filename)
     wb.close()
